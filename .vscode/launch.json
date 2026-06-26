@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "1-ExtractData",
+      "type": "debugpy",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/src/extract_data",
+      "program": "main.py",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "2-BuildReport",
+      "type": "debugpy",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/src/build_report",
+      "program": "main.py",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
