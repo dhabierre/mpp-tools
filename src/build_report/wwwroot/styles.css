@@ -119,6 +119,11 @@ tbody tr:hover {
     padding: 0 10px 80px;
     background: #0f141a;
     border-radius: 8px;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
 }
 
 .chart-container-pt {
@@ -126,6 +131,11 @@ tbody tr:hover {
     max-height: 300px;
     padding: 0 10px 120px;
     border-radius: 8px;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
 }
 
 .chart-container-pt.odd {
@@ -134,6 +144,15 @@ tbody tr:hover {
 
 .chart-container-pt.even {
     background: #0f141a;
+}
+
+.chart-container-ct:hover,
+.chart-container-pt:hover
+{
+    border-color: #58a6ff55;
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(88, 166, 255, 0.15);
 }
 
 /* ===========================
@@ -159,8 +178,10 @@ tbody tr:hover {
     justify-content: space-between;
 }
 
-.footer img {
-    display: block;
+.footer-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 /* ===========================

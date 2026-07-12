@@ -96,9 +96,14 @@ def _render_html(
   </div>
   <div class="card footer">
     <span class="muted">Generated at {generated_at}</span>
-    <a href="https://github.com/dhabierre/mpp-tools" target="_blank">
-      <img src="github.png" alt="GitHub" title="GitHub Project" width="50">
-    </a>
+    <div class="footer-links">
+        <a href="https://github.com/dhabierre/mpp-tools" target="_blank" rel="noopener noreferrer">
+        <img src="github.png" alt="GitHub" title="GitHub Project" width="50">
+        </a>
+        <a href="https://www.monpetitplacement.fr/" target="_blank" rel="noopener noreferrer">
+        <img src="favicon.svg" title="Mon Petit Placement" width="30" />
+        </a>
+    </div>
   </div>
 </body>
 </html>
@@ -475,7 +480,7 @@ def _render_positions(
   </tfoot>
 </table>
 <div class="right" style="margin-top: 10px; margin-right: 8px;">
-    <a href="javascript:void(0);" id="toggle-columns">➕ &gt;&gt;</a>
+    <a href="javascript:void(0);" id="toggle-columns">➕ more details</a>
 </div>
 <script>
     const button = document.getElementById("toggle-columns");
@@ -483,7 +488,7 @@ def _render_positions(
         const details = document.querySelectorAll(".details-col");
         const visible = details[0].classList.contains("show");
         details.forEach(col => col.classList.toggle("show"));
-        button.textContent = visible ? "➕ >>" : "➖ <<";
+        button.textContent = visible ? "➕ more details" : "➖ less details";
     }});
 </script>
 """
