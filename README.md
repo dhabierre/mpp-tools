@@ -41,7 +41,11 @@ Clone the repository and run the `setup.sh` script:
 
 ```bash
 git clone https://github.com/dhabierre/mpp-tools.git
+
 cd mpp-tools
+
+git fetch --tags
+git checkout 1.0.1
 ```
 
 ```bash

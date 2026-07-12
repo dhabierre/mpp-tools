@@ -1,5 +1,6 @@
 import sys
-from datetime import datetime
+from calendar import monthrange
+from datetime import date, datetime
 from zoneinfo import ZoneInfo
 from html import escape
 import json
@@ -10,7 +11,8 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 from config import Config
 from shared.models import Capital, CapitalTrend, Position, Product, ProductTrend
 
-RECENT_TREND_WINDOW = 30  # pour calculer la moyenne des variations (~ pente d'une régression)
+RECENT_TREND_WINDOW = 30  # calculate the trend slope
+PERFORMANCE_PERIODS = (("1M", 1), ("3M", 3), ("6M", 6), ("1Y", 12))
 
 COLOR_PERFORMANCE = "#4F82F0"
 COLOR_GAIN = "#be3f98"
@@ -57,7 +59,7 @@ def _render_html(
     capital_trends_performance_html = _render_capital_trends_by_performance(capital_trends)
     capital_trends_amounts_html = _render_capital_trends_by_amounts(capital_trends)
     positions_html = _render_positions(capital, positions, products, config)
-    product_trends_html = _render_product_trends(product_trends)
+    product_trends_html = _render_product_trends(product_trends, positions)
 
     return f"""
 <!doctype html>
@@ -455,11 +457,9 @@ def _render_positions(
       <th class="center details-col">Resources</th>
     </tr>
   </thead>
-
   <tbody>
     {''.join(rows)}
   </tbody>
-
   <tfoot>
     <tr>
       <th class="left">Total</th>
@@ -473,7 +473,6 @@ def _render_positions(
       <th class="center details-col"></th>
     </tr>
   </tfoot>
-
 </table>
 <div class="right" style="margin-top: 10px; margin-right: 8px;">
     <a href="javascript:void(0);" id="toggle-columns">➕ &gt;&gt;</a>
@@ -491,7 +490,8 @@ def _render_positions(
 
 
 def _render_product_trends(
-    product_trends: dict[str, list[ProductTrend]]
+    product_trends: dict[str, list[ProductTrend]],
+    positions: list[Position]
 ) -> str:
     html = ""
 
@@ -572,14 +572,21 @@ def _render_product_trends(
         labels_js = json.dumps(labels)
         values_js = json.dumps(values)
 
+        period_performances = _calculate_period_performances(product_trends.get(guid, []))
+        position = next((p for p in positions if p.guid == guid))
+
         html += f"""
 <div class="chart-container-pt {css_class}">
-    <h3>
-        {name}
-        <span style="font-weight: normal; font-size: 0.7em; margin-left: 8px; color: {initial_investment_buy_point_color};">
-            <span class="first_invest_order">{initial_investment_buy_value:,.2f}</span> → {last_v:,.2f}
-        </span>
+    <h3 class="position-title">
+        <span>{name}</span>
+        <small class="{(_css_class(position.performance) if position.performance is not None else 'neutral')}">
+            → {position.performance:,.2f} %
+        </small>
     </h3>
+    <div>
+        {_render_period_performances(period_performances)}
+    </div>
+    <br/>
     <canvas id="{canvas_id}" />
     <script>
         const labels_{gid} = {labels_js};
@@ -611,7 +618,6 @@ def _render_product_trends(
                         label: "Max Value",
                         data: Array({len(values)}).fill({max_v}),
                         borderColor: "{COLOR_GREEN}",
-                        backgroundColor: "{COLOR_GREEN}",
                         borderWidth: 1,
                         borderDash: [6, 6],
                         pointRadius: 0
@@ -721,6 +727,54 @@ def _render_product_trends(
     """
 
     return html
+
+
+def _render_period_performances(
+    performances: list[tuple[str, float | None]]
+) -> str:
+    return "".join(
+        f'<span class="period-performance {(_css_class(value) if value is not None else "neutral")}">'
+        f'<span class="label">{label}:</span> {value:+.2f} %</span>'
+        if value is not None
+        else f'<span class="period-performance neutral"><span>{label}</span>: —</span>'
+        for label, value in performances)
+
+
+def _calculate_period_performances(
+    product_trends: list[ProductTrend]
+) -> list[tuple[str, float | None]]:
+    """Return returns relative to the latest available product valuation."""
+    dated_trends = sorted(
+        (
+            (date.fromisoformat(trend.date), trend.amount)
+            for trend in product_trends
+        ),
+        key=lambda trend: trend[0])
+
+    if not dated_trends:
+        return [(label, None) for label, _ in PERFORMANCE_PERIODS]
+
+    current_date, current_amount = dated_trends[-1]
+    performances = []
+    for label, months in PERFORMANCE_PERIODS:
+        reference_date = _subtract_months(current_date, months)
+        reference = next(
+            (trend for trend in reversed(dated_trends) if trend[0] <= reference_date),
+            None)
+        performance = (
+            (current_amount / reference[1] - 1) * 100
+            if reference is not None and reference[1]
+            else None)
+        performances.append((label, performance))
+    return performances
+
+
+def _subtract_months(value: date, months: int) -> date:
+    year_offset, month_index = divmod(value.month - months - 1, 12)
+    target_year = value.year + year_offset
+    target_month = month_index + 1
+    target_day = min(value.day, monthrange(target_year, target_month)[1])
+    return date(target_year, target_month, target_day)
 
 
 def _find_order_values_dates(
