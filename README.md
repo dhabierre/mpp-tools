@@ -2,6 +2,8 @@
 
 A collection of Python tools to extract data from [Mon Petit Placement](https://www.monpetitplacement.fr) and generate a personal portfolio performance report.
 
+❤️ Made in France
+
 ![Screenshot](.resources/screen.png)
 
 ## 🔒 Privacy Notice
@@ -239,4 +241,6 @@ sudo chmod 775 /var/www/mpp
 newgrp www-data
 ```
 
-❤️ Made in France
+## ⚖️ License
+
+MIT — see [LICENSE](LICENSE).
