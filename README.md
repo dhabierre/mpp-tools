@@ -2,9 +2,9 @@
 
 A collection of Python tools to extract data from [Mon Petit Placement](https://www.monpetitplacement.fr) and generate a personal portfolio performance report.
 
-❤️ Made in France
+![Screenshot](.resources/screen.jpg)
 
-![Screenshot](.resources/screen.png)
+❤️ Made in France
 
 ## 🔒 Privacy Notice
 
@@ -47,7 +47,7 @@ git clone https://github.com/dhabierre/mpp-tools.git
 cd mpp-tools
 
 git fetch --tags
-git checkout 1.0.1
+git checkout 1.0.2
 ```
 
 ```bash

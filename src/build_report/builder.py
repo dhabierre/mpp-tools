@@ -119,6 +119,7 @@ def _render_capital_trends_by_performance(
         "gain": [t.gain for t in capital_trends]
     }
     values["max_performance"] = max(values["performance"], default=0)
+    values["max_gain"] = max(values["gain"], default=0)
     canvas_id = "capital_trends_performance_chart"
     return f"""
 <div class="chart-container-ct">
@@ -129,6 +130,10 @@ def _render_capital_trends_by_performance(
     <script>
         const labels_pg = {json.dumps(labels)};
         const data_pg = {json.dumps(values)};
+        const minPerformanceValue = Math.round(Math.min(...data_pg.performance), 0);
+        const maxPerformanceValue = Math.round(Math.max(...data_pg.performance), 0) + 1;
+        const minGainValue = Math.round(Math.min(...data_pg.gain), 0);
+        const maxGainValue = Math.round(Math.max(...data_pg.gain), 0) +100;
         new Chart(document.getElementById("{canvas_id}"), {{
             type: "line",
             data: {{
@@ -145,18 +150,9 @@ def _render_capital_trends_by_performance(
                         pointHoverRadius: 6
                     }},
                     {{
-                        label: 'Gain',
-                        data: data_pg.gain,
-                        yAxisID: 'y1',
-                        borderColor: '{COLOR_GAIN}',
-                        backgroundColor: '{COLOR_GAIN}',
-                        borderWidth: 1,
-                        pointRadius: 1,
-                        pointHoverRadius: 6
-                    }},
-                    {{
                         label: "Max Performance",
                         data: Array(data_pg.performance.length).fill(data_pg.max_performance),
+                        yAxisID: 'y',
                         borderColor: "{COLOR_PERFORMANCE}",
                         borderWidth: 1,
                         borderDash: [6, 6],
@@ -171,12 +167,34 @@ def _render_capital_trends_by_performance(
                         pointRadius: 0
                     }},
                     {{
+                        label: 'Gain',
+                        data: data_pg.gain,
+                        yAxisID: 'y1',
+                        borderColor: '{COLOR_GAIN}',
+                        backgroundColor: '{COLOR_GAIN}',
+                        borderWidth: 1,
+                        pointRadius: 1,
+                        pointHoverRadius: 6,
+                        hidden: true
+                    }},
+                    {{
+                        label: "Max Gain",
+                        data: Array(data_pg.gain.length).fill(data_pg.max_gain),
+                        yAxisID: 'y1',
+                        borderColor: "{COLOR_GAIN}",
+                        borderWidth: 1,
+                        borderDash: [6, 6],
+                        pointRadius: 0,
+                        hidden: true
+                    }},
+                    {{
                         label: "ZG",
                         data: Array(data_pg.gain.length).fill(0),
                         yAxisID: 'y1',
                         borderColor: "{COLOR_GAIN_ZERO}",
                         borderWidth: 1,
-                        pointRadius: 0
+                        pointRadius: 0,
+                        hidden: true
                     }}
                 ]
             }},
@@ -191,7 +209,7 @@ def _render_capital_trends_by_performance(
                     legend: {{
                         labels: {{
                             filter: (legendItem) => {{
-                                return !["ZP", "ZG"].includes(legendItem.text);
+                                return !["Max Performance", "Max Gain", "ZP", "ZG"].includes(legendItem.text);
                             }}
                         }},
                         onClick: (e, legendItem, legend) => {{
@@ -199,12 +217,21 @@ def _render_capital_trends_by_performance(
                             const index = legendItem.datasetIndex;
                             const isVisible = chart.isDatasetVisible(index);
                             chart.setDatasetVisibility(index, !isVisible);
-                            if (index === 0) {{ // Perf
-                                chart.setDatasetVisibility(2, !isVisible); // Max Performance
-                                chart.setDatasetVisibility(3, !isVisible); // ZP
+                            if (index === 0 || index === 1) {{ // Perf
+                                chart.setDatasetVisibility(1, !isVisible); // Max Performance
+                                chart.setDatasetVisibility(2, !isVisible); // ZP
+                                
+                                chart.setDatasetVisibility(3, isVisible); // Gain
+                                chart.setDatasetVisibility(4, isVisible); // Max Gain
+                                chart.setDatasetVisibility(5, isVisible); // ZG
                             }}
-                            if (index === 1) {{ // Gain
-                                chart.setDatasetVisibility(4, !isVisible); // ZG
+                            if (index === 3 || index === 4) {{ // Gain
+                                chart.setDatasetVisibility(4, !isVisible); // Max Gain
+                                chart.setDatasetVisibility(5, !isVisible); // ZP
+                                
+                                chart.setDatasetVisibility(0, isVisible); // Performance
+                                chart.setDatasetVisibility(1, isVisible); // Max Performance
+                                chart.setDatasetVisibility(2, isVisible); // ZG
                             }}
                             chart.update();
                         }}
@@ -234,6 +261,8 @@ def _render_capital_trends_by_performance(
                     y: {{
                         type: 'linear',
                         position: 'left',
+                        min: minPerformanceValue,
+                        max: maxPerformanceValue,
                         title: {{
                             display: true,
                             text: 'Performance',
@@ -246,6 +275,8 @@ def _render_capital_trends_by_performance(
                     y1: {{
                         type: 'linear',
                         position: 'right',
+                        min: minGainValue,
+                        max: maxGainValue,
                         title: {{
                             display: true,
                             text: 'Gain',
@@ -279,8 +310,8 @@ def _render_capital_trends_by_amounts(
     <script>
         const labels_ci = {json.dumps(labels)};
         const data_ci = {json.dumps(values)};
-        const maxValue = Math.round(Math.max(...data_ci.amount, ...data_ci.invested_amount), 0) +500;
         const minValue = Math.round(Math.min(...data_ci.amount, ...data_ci.invested_amount), 0);
+        const maxValue = Math.round(Math.max(...data_ci.amount, ...data_ci.invested_amount), 0) +500;
         new Chart(document.getElementById("{canvas_id}"), {{
             type: "line",
             data: {{
@@ -297,6 +328,14 @@ def _render_capital_trends_by_amounts(
                         pointHoverRadius: 6
                     }},
                     {{
+                        label: "Max Capital",
+                        data: Array(data_ci.amount.length).fill(data_ci.max_amount),
+                        borderColor: "{COLOR_CAPITAL}",
+                        borderWidth: 1,
+                        borderDash: [6, 6],
+                        pointRadius: 0
+                    }},
+                    {{
                         label: 'Investi',
                         data: data_ci.invested_amount,
                         yAxisID: 'y1',
@@ -305,14 +344,6 @@ def _render_capital_trends_by_amounts(
                         borderWidth: 1,
                         pointRadius: 1,
                         pointHoverRadius: 6
-                    }},
-                    {{
-                        label: "Max Capital",
-                        data: Array(data_ci.amount.length).fill(data_ci.max_amount),
-                        borderColor: "{COLOR_CAPITAL}",
-                        borderWidth: 1,
-                        borderDash: [6, 6],
-                        pointRadius: 0
                     }}
                 ]
             }},
@@ -327,7 +358,7 @@ def _render_capital_trends_by_amounts(
                     legend: {{
                         labels: {{
                             filter: (legendItem) => {{
-                                return !["ZP", "ZG"].includes(legendItem.text);
+                                return !["Max Capital"].includes(legendItem.text);
                             }}
                         }},
                         onClick: (e, legendItem, legend) => {{
@@ -336,14 +367,9 @@ def _render_capital_trends_by_amounts(
                             const isVisible = chart.isDatasetVisible(index);
                             chart.setDatasetVisibility(index, !isVisible);
                             if (index === 0) {{ // Capital
-                                chart.setDatasetVisibility(2, !isVisible); // Max Capital
+                                chart.setDatasetVisibility(1, !isVisible); // Max Capital
                             }}
                             chart.update();
-                        }}
-                    }},
-                    tooltip: {{
-                        filter: (tooltipItem) => {{
-                            return !["ZP", "ZG"].includes(tooltipItem.dataset.label);
                         }}
                     }}
                 }},
