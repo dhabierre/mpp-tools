@@ -12,13 +12,13 @@ from history import init_db, save_data
 from mpp_client import MPPClient
 from shared.models import Position, Product, ProductTrend
 
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
 )
 
 logger = logging.getLogger("mpp")
+
 
 def main() -> None:
     _check_env_file()
@@ -82,7 +82,7 @@ def _extract_product_trends(client: MPPClient, positions: dict[str, Position], r
     return data
 
 
-def _extract_invest_orders(client: MPPClient, products: dict[str, Product] , run_at: str, index: int):
+def _extract_invest_orders(client: MPPClient, products: dict[str, Product], run_at: str, index: int):
     logger.info(f"🔄 [{index} /6] Extracting 'Invest Orders' data...")
     data = client.fetch_invest_orders(run_at, products)
     logger.info(f"✅ [{index} /6] Data 'Invest Orders' extracted ({len(data)}).")

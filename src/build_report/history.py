@@ -1,14 +1,11 @@
 from collections import defaultdict
 from datetime import date
 import sqlite3
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from config import Config
 from sampling import reduce_points_by_ratio, reduce_points_to_limit
 from shared.models import Capital, CapitalTrend, InvestOrder, Position, Product, ProductTrend
+
 
 def fetch_capital(
     config: Config
@@ -94,7 +91,7 @@ def fetch_product_trends(
     for row in rows:
         trend = ProductTrend.from_row(dict(row))
         product_trends[trend.guid].append(trend)
-    
+
     for guid in product_trends:
         product_trends[guid] = reduce_points_to_limit(
             product_trends[guid],
@@ -103,7 +100,7 @@ def fetch_product_trends(
     invest_orders = fetch_invest_orders(config)
 
     # SELECT type, sub_type, row_type, COUNT(*) FROM invest_orders GROUP BY type, sub_type, row_type ORDER BY COUNT(*) DESC
-    # 
+    #
     # type    |sub_type          |row_type|count(*)|
     # --------+------------------+--------+--------+
     # buy     |monthly-investment|buy     |     496|
@@ -134,8 +131,8 @@ def _enrich_with(
 ) -> None:
     product_orders = sorted(
         [o for o in invest_orders if o.row_guid == guid],
-            key=lambda o: o.processed_at
-        )
+        key=lambda o: o.processed_at
+    )
     scoped_orders = [o for o in product_orders if o.sub_type == sub_type and o.row_type == row_type]
     if not scoped_orders:
         if tag == "INITIAL_INVESTMENT_BUY_ORDER":

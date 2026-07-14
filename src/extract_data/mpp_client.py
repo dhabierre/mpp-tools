@@ -64,7 +64,6 @@ class MPPClient:
             user = self._get(self._user_investment_accounts_url())
             self.user_kyc = user["userKyc"].split("/")[-1]
 
-
     def fetch_capital(
         self,
         run_at: str
@@ -72,14 +71,12 @@ class MPPClient:
         data = self._get(self._capital_url())
         return Capital.from_api(data, run_at)
 
-
     def fetch_capital_trends(
         self,
         run_at: str
     ) -> list[CapitalTrend]:
         data = self._get(self._financial_history_url())
         return [CapitalTrend.from_api(item, run_at) for item in data["financialValues"]]
-
 
     def fetch_products(
         self,
@@ -90,7 +87,6 @@ class MPPClient:
             item["id"]: Product.from_api(item["id"], item, run_at)
             for item in data["hydra:member"]
         }
-
 
     def fetch_positions(
         self,
@@ -103,7 +99,6 @@ class MPPClient:
                 Position.from_api(item, run_at) for item in data["hydra:member"]
             )
         }
-
 
     def fetch_product_trends(
         self,
@@ -152,7 +147,6 @@ class MPPClient:
 
         return product_trends
 
-
     def fetch_invest_orders(
         self,
         run_at: str,
@@ -200,9 +194,7 @@ class MPPClient:
             page,
             limit)
 
-
         return invest_orders
-
 
     def _get(
         self,
@@ -211,7 +203,6 @@ class MPPClient:
         r = self.session.get(url, timeout=self.timeout)
         r.raise_for_status()
         return r.json()
-
 
     def _post(
         self,
@@ -222,36 +213,30 @@ class MPPClient:
         r.raise_for_status()
         return r.json()
 
-
     def _user_investment_accounts_url(
         self
     ) -> str:
         return f"{API_URL}/user_investment_accounts/{self.config.user_investment_account_id}"
-
 
     def _financial_history_url(
         self
     ) -> str:
         return f"{API_URL}/user_investment_accounts/{self.config.user_investment_account_id}/financial_history"
 
-
     def _capital_url(
         self
     ) -> str:
         return f"{API_URL}/user_investment_accounts/{self.config.user_investment_account_id}/user_financial_capital"
-
 
     def _products_url(
         self
     ) -> str:
         return f"{API_URL}/user_kycs/{self.user_kyc}/available_products?limit=200"
 
-
     def _positions_url(
         self
     ) -> str:
         return f"{API_URL}/user_investment_accounts/{self.config.user_investment_account_id}/products_current_values?order[amount]=desc"
-
 
     def _product_trends_url(
         self,
@@ -260,7 +245,6 @@ class MPPClient:
         limit: int = 200
     ) -> str:
         return f"{API_URL}/product_values?page={page}&limit={limit}&order%5Bdate%5D=ASC&product={guid}"
-
 
     def _invest_orders_url(
         self,

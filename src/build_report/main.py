@@ -4,12 +4,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
 from builder import build_html_report
 from config import build_config
 from history import fetch_capital, fetch_capital_trends, fetch_positions, fetch_product_trends, fetch_products
-
 
 logging.basicConfig(
     level=logging.INFO,
@@ -17,6 +14,7 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger("mpp")
+
 
 def main() -> None:
     _check_env_file()

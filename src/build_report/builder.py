@@ -15,19 +15,20 @@ RECENT_TREND_WINDOW = 30  # calculate the trend slope
 PERFORMANCE_PERIODS = (("1M", 1), ("3M", 3), ("6M", 6), ("1Y", 12))
 
 COLOR_PERFORMANCE = "#4F82F0"
-COLOR_GAIN = "#be3f98"
-
 COLOR_PERFORMANCE_ZERO = "#152444"
+
+COLOR_GAIN = "#be3f98"
 COLOR_GAIN_ZERO = "#50143F"
 
 COLOR_CAPITAL = COLOR_PERFORMANCE
 COLOR_INVESTED = COLOR_GAIN
 
-COLOR_GREEN  = "#3fb950"
-COLOR_BLUE   = "#0000ff"
-COLOR_CYAN   = "#00ffff"
-COLOR_RED    = "#fd483f"
+COLOR_GREEN = "#3fb950"
+COLOR_BLUE = "#0000ff"
+COLOR_CYAN = "#00ffff"
+COLOR_RED = "#fd483f"
 COLOR_YELLOW = "#ffe949"
+
 
 def build_html_report(
     capital: Capital,
@@ -220,7 +221,6 @@ def _render_capital_trends_by_performance(
                             if (index === 0 || index === 1) {{ // Perf
                                 chart.setDatasetVisibility(1, !isVisible); // Max Performance
                                 chart.setDatasetVisibility(2, !isVisible); // ZP
-                                
                                 chart.setDatasetVisibility(3, isVisible); // Gain
                                 chart.setDatasetVisibility(4, isVisible); // Max Gain
                                 chart.setDatasetVisibility(5, isVisible); // ZG
@@ -228,7 +228,6 @@ def _render_capital_trends_by_performance(
                             if (index === 3 || index === 4) {{ // Gain
                                 chart.setDatasetVisibility(4, !isVisible); // Max Gain
                                 chart.setDatasetVisibility(5, !isVisible); // ZP
-                                
                                 chart.setDatasetVisibility(0, isVisible); // Performance
                                 chart.setDatasetVisibility(1, isVisible); // Max Performance
                                 chart.setDatasetVisibility(2, isVisible); // ZG
@@ -429,7 +428,7 @@ def _render_positions(
     config: Config
 ) -> str:
     rows = []
-    
+
     total_amount = capital.amount if capital is not None else 0
     total_invested = capital.invested_amount if capital is not None else 0
 
@@ -535,8 +534,6 @@ def _render_product_trends(
         labels = [item.date for item in t]
         values = [item.amount for item in t]
 
-        last_v = values[-1] if values else 0
-
         # Yellow line & yellow point
 
         initial_investment_buy = _find_order_values_dates(
@@ -544,9 +541,8 @@ def _render_product_trends(
             t,
             labels,
             values)
-        
+
         initial_investment_buy_value, initial_investment_buy_date = initial_investment_buy[0]
-        initial_investment_buy_point_color = COLOR_GREEN if initial_investment_buy_value <= last_v else COLOR_RED
 
         # Blue points
 
@@ -555,7 +551,7 @@ def _render_product_trends(
             t,
             labels,
             values)
-        
+
         monthly_dates_js = json.dumps([x[1] for x in monthly_investment_buy])
         monthly_values_js = json.dumps([x[0] for x in monthly_investment_buy])
 
@@ -566,7 +562,7 @@ def _render_product_trends(
             t,
             labels,
             values)
-        
+
         free_dates_js = json.dumps([x[1] for x in monthly_investment_buy])
         free_values_js = json.dumps([x[0] for x in monthly_investment_buy])
 
@@ -577,7 +573,7 @@ def _render_product_trends(
             t,
             labels,
             values)
-        
+
         exchange_sell_dates_js = json.dumps([x[1] for x in exchange_sell])
         exchange_sell_values_js = json.dumps([x[0] for x in exchange_sell])
 
@@ -588,10 +584,10 @@ def _render_product_trends(
             t,
             labels,
             values)
-        
+
         exchange_buy_dates_js = json.dumps([x[1] for x in exchange_buy])
         exchange_buy_values_js = json.dumps([x[0] for x in exchange_buy])
-        
+
         canvas_id = f"product_trends_chart_{guid}"
 
         css_class = "even" if i % 2 == 0 else "odd"
@@ -832,7 +828,7 @@ def _is_recent_trend_positive(
     window = min(window, len(values))
     recent = values[-window:]
     deltas = [
-        recent[i] - recent[i-1]
+        recent[i] - recent[i - 1]
         for i in range(1, len(recent))
     ]
     avg_delta = sum(deltas) / len(deltas)
@@ -860,7 +856,7 @@ def _render_ft_link(
     isin: str
 ) -> str:
     if isin is None:
-      return ""
+        return ""
     url = f"https://markets.ft.com/data/funds/tearsheet/summary?s={isin}:EUR"
     return f"""
     <a

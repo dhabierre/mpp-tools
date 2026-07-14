@@ -260,7 +260,7 @@ class ProductTrend:
             amount=row.get("amount"),
             date=row.get("date"),
             run_at=row.get("run_at"),
-            tag = None
+            tag=None
         )
 
     def to_db_row(

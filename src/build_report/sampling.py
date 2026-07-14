@@ -10,6 +10,7 @@ def reduce_points_by_ratio(points: list, ratio: int) -> list:
     sampled.append(points[-1])
     return sampled
 
+
 def reduce_points_to_limit(points: list, max_points: int) -> list:
     n = len(points)
     if n <= max_points:
