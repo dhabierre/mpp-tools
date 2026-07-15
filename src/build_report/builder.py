@@ -248,7 +248,8 @@ def _render_capital_trends_by_performance(
                             unit: 'month',
                             displayFormats: {{
                                 month: 'MMM yy'
-                            }}
+                            }},
+                            tooltipFormat: 'MMM d yyyy'
                         }},
                         ticks: {{
                             autoSkip: true,
@@ -379,7 +380,8 @@ def _render_capital_trends_by_amounts(
                             unit: 'month',
                             displayFormats: {{
                                 month: 'MMM yy'
-                            }}
+                            }},
+                            tooltipFormat: 'MMM d yyyy'
                         }},
                         ticks: {{
                             autoSkip: true,
@@ -737,7 +739,8 @@ def _render_product_trends(
                             unit: 'month',
                             displayFormats: {{
                                 month: 'MMM yy'
-                            }}
+                            }},
+                            tooltipFormat: 'MMM d yyyy'
                         }},
                         ticks: {{
                             autoSkip: true,
