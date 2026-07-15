@@ -106,6 +106,41 @@ def _render_html(
         </a>
     </div>
   </div>
+  <script>
+    (() => {{
+      const fullscreenClass = "chart-container-fullscreen";
+      const chartContainerSelector = ".chart-container-ct, .chart-container-pt";
+      const resizeChart = (container) => {{
+        requestAnimationFrame(() => Chart.getChart(container.querySelector("canvas"))?.resize());
+      }};
+      const closeFullscreen = (container) => {{
+        if (!container) return;
+        container.classList.remove(fullscreenClass);
+        document.body.classList.remove("chart-fullscreen-open");
+        resizeChart(container);
+      }};
+      document.addEventListener("click", (event) => {{
+        const closeButton = event.target.closest(".chart-fullscreen-close");
+        if (closeButton) {{
+          closeFullscreen(closeButton.closest(chartContainerSelector));
+          return;
+        }}
+        const fullscreenButton = event.target.closest(".chart-fullscreen-open");
+        if (!fullscreenButton) return;
+        const container = fullscreenButton.closest(chartContainerSelector);
+        if (container.classList.contains(fullscreenClass)) return;
+        document.querySelectorAll(`.${{fullscreenClass}}`).forEach(closeFullscreen);
+        container.classList.add(fullscreenClass);
+        document.body.classList.add("chart-fullscreen-open");
+        resizeChart(container);
+      }});
+      document.addEventListener("keydown", (event) => {{
+        if (event.key === "Escape") {{
+          closeFullscreen(document.querySelector(`.${{fullscreenClass}}`));
+        }}
+      }});
+    }})();
+  </script>
 </body>
 </html>
 """
@@ -124,10 +159,14 @@ def _render_capital_trends_by_performance(
     canvas_id = "capital_trends_performance_chart"
     return f"""
 <div class="chart-container-ct">
+    <button class="chart-fullscreen-open" type="button" aria-label="Agrandir le graphique">⛶</button>
+    <button class="chart-fullscreen-close" type="button" aria-label="Fermer le graphique en plein écran">&times;</button>
     <h3>
         Performance & Gain
     </h3>
-    <canvas id="{canvas_id}" />
+    <div class="chart-canvas-wrapper">
+        <canvas id="{canvas_id}" />
+    </div>
     <script>
         const labels_pg = {json.dumps(labels)};
         const data_pg = {json.dumps(values)};
@@ -303,10 +342,14 @@ def _render_capital_trends_by_amounts(
     canvas_id = "capital_trends_amounts_chart"
     return f"""
 <div class="chart-container-ct">
+    <button class="chart-fullscreen-open" type="button" aria-label="Agrandir le graphique">⛶</button>
+    <button class="chart-fullscreen-close" type="button" aria-label="Fermer le graphique en plein écran">&times;</button>
     <h3>
         Capital & Invested
     </h3>
-    <canvas id="{canvas_id}" />
+    <div class="chart-canvas-wrapper">
+        <canvas id="{canvas_id}" />
+    </div>
     <script>
         const labels_ci = {json.dumps(labels)};
         const data_ci = {json.dumps(values)};
@@ -606,17 +649,21 @@ def _render_product_trends(
 
         html += f"""
 <div class="chart-container-pt {css_class}">
+    <button class="chart-fullscreen-open" type="button" aria-label="Agrandir le graphique">⛶</button>
+    <button class="chart-fullscreen-close" type="button" aria-label="Fermer le graphique en plein écran">&times;</button>
     <h3 class="position-title">
-        <span>{name}</span>
-        <small class="{(_css_class(position.performance) if position.performance is not None else 'neutral')}">
-            → {position.performance:,.2f} %
-        </small>
+        {name}
     </h3>
-    <div>
+    <div class="{(_css_class(position.performance) if position.performance is not None else 'neutral')}">
+        → {position.performance:,.2f} %
+    </div>
+    <div class="period-performances">
         {_render_period_performances(period_performances)}
     </div>
     <br/>
-    <canvas id="{canvas_id}" />
+    <div class="chart-canvas-wrapper">
+        <canvas id="{canvas_id}" />
+    </div>
     <script>
         const labels_{gid} = {labels_js};
         const values_{gid} = {values_js};

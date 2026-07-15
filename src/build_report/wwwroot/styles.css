@@ -13,6 +13,18 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
+body.chart-fullscreen-open {
+    overflow: hidden;
+}
+
+body.chart-fullscreen-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 1);
+}
+
 h1,
 h2 {
     color: #f0f6fc;
@@ -116,7 +128,7 @@ tbody tr:hover {
 .chart-container-ct {
     height: 300px;
     max-height: 300px;
-    padding: 0 10px 80px;
+    padding: 0 10px 80px; /* 80px => bottom for X */
     background: #0f141a;
     border-radius: 8px;
     border: 1px solid transparent;
@@ -129,13 +141,90 @@ tbody tr:hover {
 .chart-container-pt {
     height: 300px;
     max-height: 300px;
-    padding: 0 10px 120px;
+    padding: 0 10px 150px; /* 150px => bottom for X */
     border-radius: 8px;
     border: 1px solid transparent;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
     transition:
         border-color .2s ease,
         box-shadow .2s ease;
+}
+
+.chart-container-ct,
+.chart-container-pt {
+    position: relative;
+}
+
+.chart-canvas-wrapper {
+    position: relative;
+    height: 100%;
+}
+
+.chart-container-fullscreen {
+    position: fixed;
+    inset: 16px;
+    z-index: 1000;
+    box-sizing: border-box;
+    height: auto;
+    max-height: none;
+    padding: 20px 28px 40px;
+    border: 1px solid #58a6ff;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65);
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container-fullscreen .chart-canvas-wrapper {
+    flex: 1;
+    min-height: 0;
+}
+
+.chart-container-fullscreen canvas {
+    cursor: default;
+}
+
+.chart-fullscreen-open,
+.chart-fullscreen-close {
+    position: absolute;
+    top: 18px;
+    right: 12px;
+    z-index: 1;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: #f0f6fc;
+    background: #21262d;
+    border: 1px solid #8b949e;
+    border-radius: 50%;
+    font-size: 20px;
+    line-height: 28px;
+    cursor: pointer;
+}
+
+.chart-fullscreen-open {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.chart-fullscreen-close {
+    display: none;
+}
+
+.chart-fullscreen-open:hover,
+.chart-fullscreen-close:hover {
+    background: #30363d;
+}
+
+.chart-container-fullscreen .chart-fullscreen-open,
+.chart-container-fullscreen .chart-fullscreen-close {
+    display: none;
+}
+
+.chart-container-fullscreen .chart-fullscreen-close {
+    display: block;
 }
 
 .chart-container-pt.odd {
@@ -156,16 +245,11 @@ tbody tr:hover {
 }
 
 /* ===========================
-   Position title
+   Period Performance
    =========================== */
 
-.position-title {
-    display: flex;
-    align-items: center;
-}
-
-.position-title small {
-    margin-left: auto;
+.period-performances {
+    margin-top: 16px;
 }
 
 /* ===========================

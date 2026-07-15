@@ -47,7 +47,8 @@ git clone https://github.com/dhabierre/mpp-tools.git
 cd mpp-tools
 
 git fetch --tags
-git checkout 1.0.2
+get tag
+git checkout 1.0.0 # replace with the latest version tag
 ```
 
 ```bash
