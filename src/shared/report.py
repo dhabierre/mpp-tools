@@ -2,15 +2,14 @@ from collections import defaultdict
 from datetime import date
 import sqlite3
 
-from config import Config
-from sampling import reduce_points_by_ratio, reduce_points_to_limit
 from shared.models import Capital, CapitalTrend, InvestOrder, Position, Product, ProductTrend
+from shared.sampling import reduce_points_by_ratio, reduce_points_to_limit
 
 
 def fetch_capital(
-    config: Config
+    db_path: str
 ) -> Capital:
-    conn = sqlite3.connect(config.db_path)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     row = conn.execute(
         """
@@ -23,9 +22,10 @@ def fetch_capital(
 
 
 def fetch_capital_trends(
-    config: Config
+    db_path: str,
+    capital_trends_down_sample_ratio: int
 ) -> list[CapitalTrend]:
-    conn = sqlite3.connect(config.db_path)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
         """
@@ -38,13 +38,13 @@ def fetch_capital_trends(
     capital_trends = [CapitalTrend.from_row(dict(row)) for row in rows]
     return reduce_points_by_ratio(
         capital_trends,
-        config.capital_trends_down_sample_ratio)
+        capital_trends_down_sample_ratio)
 
 
 def fetch_products(
-    config: Config
+    db_path: str
 ) -> dict[str, Product]:
-    conn = sqlite3.connect(config.db_path)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
         """
@@ -57,9 +57,9 @@ def fetch_products(
 
 
 def fetch_positions(
-    config: Config
+    db_path: str
 ) -> list[Position]:
-    conn = sqlite3.connect(config.db_path)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
         """
@@ -73,15 +73,17 @@ def fetch_positions(
 
 
 def fetch_product_trends(
-    config: Config
+    db_path: str,
+    product_trends_cutoff_date: str,
+    product_trends_down_sample_max_points: int
 ) -> list[ProductTrend]:
-    conn = sqlite3.connect(config.db_path)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
         f"""
         SELECT *
         FROM product_trends
-        WHERE date >= '{config.product_trends_cutoff_date}'
+        WHERE date >= '{product_trends_cutoff_date}'
         ORDER BY date ASC;
         """
     ).fetchall()
@@ -95,9 +97,9 @@ def fetch_product_trends(
     for guid in product_trends:
         product_trends[guid] = reduce_points_to_limit(
             product_trends[guid],
-            config.product_trends_down_sample_max_points)
+            product_trends_down_sample_max_points)
 
-    invest_orders = fetch_invest_orders(config)
+    invest_orders = fetch_invest_orders(db_path)
 
     # SELECT type, sub_type, row_type, COUNT(*) FROM invest_orders GROUP BY type, sub_type, row_type ORDER BY COUNT(*) DESC
     #
@@ -164,9 +166,9 @@ def _enrich_with(
 
 
 def fetch_invest_orders(
-    config: Config
+    db_path: str
 ) -> list[InvestOrder]:
-    conn = sqlite3.connect(config.db_path)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     rows = conn.execute("""
         SELECT *

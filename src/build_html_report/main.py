@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from builder import build_html_report
 from config import build_config
-from history import fetch_capital, fetch_capital_trends, fetch_positions, fetch_product_trends, fetch_products
+from shared.report import fetch_capital, fetch_capital_trends, fetch_positions, fetch_product_trends, fetch_products
 
 logging.basicConfig(
     level=logging.INFO,
@@ -21,13 +21,22 @@ def main() -> None:
 
     config = build_config()
 
-    logger.info("🔄 Building report...")
+    logger.info("🔄 Building HTML report...")
 
-    capital = fetch_capital(config)
-    capital_trends = fetch_capital_trends(config)
-    products = fetch_products(config)
-    positions = fetch_positions(config)
-    product_trends = fetch_product_trends(config)
+    capital = fetch_capital(config.db_path)
+
+    capital_trends = fetch_capital_trends(
+        config.db_path,
+        config.capital_trends_down_sample_ratio)
+
+    products = fetch_products(config.db_path)
+
+    positions = fetch_positions(config.db_path)
+
+    product_trends = fetch_product_trends(
+        config.db_path,
+        config.product_trends_cutoff_date,
+        config.product_trends_down_sample_max_points)
 
     html = build_html_report(
         capital,

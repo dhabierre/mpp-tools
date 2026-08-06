@@ -11,10 +11,19 @@
       "envFile": "${workspaceFolder}/.env"
     },
     {
-      "name": "2-BuildReport",
+      "name": "2-BuildHtmlReport",
       "type": "debugpy",
       "request": "launch",
-      "cwd": "${workspaceFolder}/src/build_report",
+      "cwd": "${workspaceFolder}/src/build_html_report",
+      "program": "main.py",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "3-BuildMdReport",
+      "type": "debugpy",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/src/build_md_report",
       "program": "main.py",
       "console": "integratedTerminal",
       "envFile": "${workspaceFolder}/.env"

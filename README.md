@@ -1,8 +1,8 @@
 # MPP Tools
 
-A collection of Python tools to extract data from [Mon Petit Placement](https://www.monpetitplacement.fr) and generate a personal portfolio performance report.
+A collection of Python tools to extract data from [Mon Petit Placement](https://www.monpetitplacement.fr) and generate personal portfolio performance reports.
 
-![Screenshot](.resources/screen.jpg)
+![HTML Report](.resources/html-report.jpg)
 
 ❤️ Made in France
 
@@ -15,17 +15,19 @@ A collection of Python tools to extract data from [Mon Petit Placement](https://
 
 ## 📝 Overview
 
-**MPP Tools** is composed of two main modules:
+**MPP Tools** is composed of 3 main modules:
 
 - **Extract Data**: Retrieves and stores financial data from the MPP API
-- **Build Report**: Generates an HTML report from the collected data
+- **Build HTML Report**: Generates an HTML report from the collected data
+- **Build MD Report**: Generates an Markdown report from the collected data
 
 ### 📁 Project Structure
 
 ```
 mpp-tools/
 ├── src/
-│ ├── build_report/
+│ ├── build_html_report/
+│ ├── build_md_report/
 │ └── extract_data/
 ├── run.sh
 └── setup.sh
@@ -70,11 +72,17 @@ chmod +x setup.sh
 # 📦 Checking dependencies...
 # ✅ extract_data setup completed.
 # 
-# 🏗️ === Setup build_report ===
+# 🏗️ === Setup build_html_report ===
 # 🐍 Creating virtual environment...
 # ⚡ Activating virtual environment...
 # 📦 Checking dependencies...
-# ✅ build_report setup completed.
+# ✅ build_html_report setup completed.
+# 
+# 🏗️ === Setup build_md_report ===
+# 🐍 Creating virtual environment...
+# ⚡ Activating virtual environment...
+# 📦 Checking dependencies...
+# ✅ build_md_report setup completed.
 # 
 # 🔐 Checking permissions...
 # ✅ Added execute permission to run.sh
@@ -82,7 +90,7 @@ chmod +x setup.sh
 # 🎉 === Installation completed successfully ===
 ```
 
-Configure both modules by creating their `.env` files:
+Configure modules by creating their `.env` files:
 
 ```bash
 # 1. Extract Data Module
@@ -91,11 +99,17 @@ Configure both modules by creating their `.env` files:
 cp src/extract_data/.env.sample src/extract_data/.env
 nano src/extract_data/.env
 
-# 2. Build Report Module
+# 2. Build HTML Report Module
 # Create the `.env` file and configure report generation options
 
-cp src/build_report/.env.sample src/build_report/.env
-nano src/build_report/.env
+cp src/build_html_report/.env.sample src/build_html_report/.env
+nano src/build_html_report/.env
+
+# 3. Build MD Report Module
+# Create the `.env` file and configure report generation options
+
+cp src/build_md_report/.env.sample src/build_md_report/.env
+nano src/build_md_report/.env
 ```
 
 ## ▶️ Usage
@@ -123,13 +137,19 @@ BASE="/home/ubuntu/mpp-tools" # Change to your installation path
 # 2026-07-10 21:29:26,418 | INFO | ✅ [6 /6] Data 'Invest Orders' extracted (589).
 # 2026-07-10 21:29:28,255 | INFO | 🏁 Data stored (db: /home/ubuntu/mpp-tools/src/extract_data/mpp.sqlite3)
 
-"$BASE/src/build_report/venv/bin/python" "$BASE/src/build_report/main.py"
+"$BASE/src/build_html_report/venv/bin/python" "$BASE/src/build_html_report/main.py"
 
 # Output:
 # 
-# 2026-07-10 21:31:43,918 | INFO | 🔄 Building report...
-# 2026-07-10 21:31:44,143 | INFO | ✅ Report written (path: /home/ubuntu/mpp-tools/src/build_report/wwwroot/report.html)
+# 2026-07-10 21:31:43,918 | INFO | 🔄 Building HTML report...
+# 2026-07-10 21:31:44,143 | INFO | ✅ Report written (path: /home/ubuntu/mpp-tools/outputs/reports/report.html)
 
+"$BASE/src/build_md_report/venv/bin/python" "$BASE/src/build_md_report/main.py"
+
+# Output:
+# 
+# 2026-07-10 21:31:43,918 | INFO | 🔄 Building MD report...
+# 2026-07-10 21:31:44,143 | INFO | ✅ Report written (path: /home/ubuntu/mpp-tools/outputs/reports/report.md)
 ```
 
 ### ⏰ Scheduled Execution
@@ -168,11 +188,11 @@ crontab -e
 sudo mkdir -p /var/www/mpp
 sudo chown -R www-data:www-data /var/www/mpp
 
-# Copy all resources (report.html, styles.css, ...)
-cp src/build_report/wwwroot/* /var/www/mpp
-
 # Set `DB_PATH` to /var/www/mpp/report.html
-nano src/build_report/.env
+nano src/build_html_report/.env
+
+# Set `DB_PATH` to /var/www/mpp/report.md
+nano src/build_md_report/.env
 ```
 
 ### ⚡ Nginx Configuration

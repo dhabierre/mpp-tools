@@ -60,7 +60,8 @@ check_directory "$BASE"
 
 # Setup applications
 setup_python_env "$BASE/src/extract_data"
-setup_python_env "$BASE/src/build_report"
+setup_python_env "$BASE/src/build_html_report"
+setup_python_env "$BASE/src/build_md_report"
 
 
 # Permissions

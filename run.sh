@@ -22,5 +22,6 @@ BASE="/home/ubuntu/mpp-tools"
     mkdir -p "$LOG"
 
     "$SRC/extract_data/venv/bin/python" "$SRC/extract_data/main.py" >> "$LOG/extract_data-log.txt" 2>&1 || exit 1
-    "$SRC/build_report/venv/bin/python" "$SRC/build_report/main.py" >> "$LOG/build_report-log.txt" 2>&1
+    "$SRC/build_html_report/venv/bin/python" "$SRC/build_html_report/main.py" >> "$LOG/build_html_report-log.txt" 2>&1
+    "$SRC/build_md_report/venv/bin/python" "$SRC/build_md_report/main.py" >> "$LOG/build_md_report-log.txt" 2>&1
 )

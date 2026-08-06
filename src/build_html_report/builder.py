@@ -9,6 +9,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from config import Config
+from resources import get_css, get_favicon, get_github
 from shared.models import Capital, CapitalTrend, Position, Product, ProductTrend
 
 RECENT_TREND_WINDOW = 30  # calculate the trend slope
@@ -62,20 +63,27 @@ def _render_html(
     positions_html = _render_positions(capital, positions, products, config)
     product_trends_html = _render_product_trends(product_trends, positions)
 
+    css = get_css()
+    favicon_svg = get_favicon()
+    github_png = get_github()
+
     return f"""
 <!doctype html>
 <html>
 <head>
   <meta charset="utf-8">
   <title>MPP Report</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" href="{favicon_svg}">
   <link href="styles.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+  <style>
+{css}
+  </style>
 </head>
 <body>
   <h1>
-    <img src="favicon.svg" class="mpp-logo" />
+    <img src="{favicon_svg}" class="mpp-logo" />
     MPP Report
   </h1>
   <div class="card">
@@ -99,10 +107,10 @@ def _render_html(
     <span class="muted">Generated at {generated_at}</span>
     <div class="footer-links">
         <a href="https://github.com/dhabierre/mpp-tools" target="_blank" rel="noopener noreferrer">
-        <img src="github.png" alt="GitHub" title="GitHub Project" width="50">
+            <img src="{github_png}" alt="GitHub" title="GitHub Project" width="50" />
         </a>
         <a href="https://www.monpetitplacement.fr/" target="_blank" rel="noopener noreferrer">
-        <img src="favicon.svg" title="Mon Petit Placement" width="30" />
+            <img src="{favicon_svg}" title="Mon Petit Placement" width="30" />
         </a>
     </div>
   </div>
