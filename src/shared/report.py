@@ -138,9 +138,10 @@ def _enrich_with(
     )
     scoped_orders = [o for o in product_orders if o.sub_type == sub_type and o.row_type == row_type]
     if not scoped_orders:
-        if tag == "INITIAL_INVESTMENT_BUY_ORDER":
-            scoped_orders = [o for o in product_orders if o.row_type == "buy"]
-            scoped_orders = [scoped_orders[0]]
+        if not scoped_orders and tag == "INITIAL_INVESTMENT_BUY_ORDER":
+            buy_orders = [o for o in product_orders if o.row_type == "buy"]
+            if buy_orders:
+                scoped_orders = [buy_orders[0]]
     for o in scoped_orders:
         exists = next((i for i in product_trends[guid] if i.date == o.processed_at), None)
         if exists:
