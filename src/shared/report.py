@@ -83,9 +83,10 @@ def fetch_product_trends(
         f"""
         SELECT *
         FROM product_trends
-        WHERE date >= '{product_trends_cutoff_date}'
+        WHERE date >= ?
         ORDER BY date ASC;
-        """
+        """,
+        (product_trends_cutoff_date,)
     ).fetchall()
     conn.close()
 
