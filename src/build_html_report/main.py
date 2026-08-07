@@ -56,7 +56,7 @@ def _check_env_file():
         load_dotenv(env_file)
     else:
         logger.error(f"❌ The .env file was not found: {env_file.resolve()}")
-        sys.exit(-1)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
