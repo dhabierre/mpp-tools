@@ -10,7 +10,7 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 from config import build_config
 from history import init_db, save_data
 from mpp_client import MPPClient
-from shared.models import Position, Product, ProductTrend
+from shared.models import Capital, CapitalTrend, InvestOrder, Position, Product, ProductTrend
 
 logging.basicConfig(
     level=logging.INFO,
@@ -44,35 +44,56 @@ def main() -> None:
     logger.info(f"🏁 Data stored (db: %s)", config.db_path)
 
 
-def _extract_capital(client: MPPClient, run_at: str, index: int):
+def _extract_capital(
+    client: MPPClient,
+    run_at: str,
+    index: int
+) -> Capital:
     logger.info(f"🔄 [%d /6] Extracting 'Capital' data...", index)
     data = client.fetch_capital(run_at)
     logger.info(f"✅ [%d /6] Data 'Capital' extracted.", index)
     return data
 
 
-def _extract_capital_trends(client: MPPClient, run_at: str, index: int):
+def _extract_capital_trends(
+    client: MPPClient,
+    run_at: str,
+    index: int
+) -> list[CapitalTrend]:
     logger.info(f"🔄 [%d /6] Extracting 'Capital Trends' data...", index)
     data = client.fetch_capital_trends(run_at)
     logger.info(f"✅ [%d /6] Data 'Capital Trends' extracted ({len(data)}).", index)
     return data
 
 
-def _extract_products(client: MPPClient, run_at: str, index: int):
+def _extract_products(
+    client: MPPClient,
+    run_at: str,
+    index: int
+) -> dict[str, Product]:
     logger.info(f"🔄 [%d /6] Extracting 'Products' data...", index)
     data = client.fetch_products(run_at)
     logger.info(f"✅ [%d /6] Data 'Products' extracted ({len(data)}).", index)
     return data
 
 
-def _extract_positions(client: MPPClient, run_at: str, index: int):
+def _extract_positions(
+    client: MPPClient,
+    run_at: str,
+    index: int
+) -> dict[str, Position]:
     logger.info(f"🔄 [%d /6] Extracting 'Positions' data...", index)
     data = client.fetch_positions(run_at)
     logger.info(f"✅ [%d /6] Data 'Positions' extracted ({len(data)}).", index)
     return data
 
 
-def _extract_product_trends(client: MPPClient, positions: dict[str, Position], run_at: str, index: int):
+def _extract_product_trends(
+    client: MPPClient,
+    positions: dict[str, Position],
+    run_at: str,
+    index: int
+) -> list[ProductTrend]:
     logger.info(f"🔄 [%d /6] Extracting 'Product Trends' data...", index)
     data: list[ProductTrend] = []
     for p in positions.values():
@@ -82,7 +103,12 @@ def _extract_product_trends(client: MPPClient, positions: dict[str, Position], r
     return data
 
 
-def _extract_invest_orders(client: MPPClient, products: dict[str, Product], run_at: str, index: int):
+def _extract_invest_orders(
+    client: MPPClient,
+    products: dict[str, Product],
+    run_at: str,
+    index: int
+) -> list[InvestOrder]:
     logger.info(f"🔄 [%d /6] Extracting 'Invest Orders' data...", index)
     data = client.fetch_invest_orders(run_at, products)
     logger.info(f"✅ [%d /6] Data 'Invest Orders' extracted ({len(data)}).", index)
