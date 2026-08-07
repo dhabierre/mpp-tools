@@ -47,7 +47,7 @@ def main() -> None:
         config)
 
     config.report_path.write_text(markdown, encoding="utf-8")
-    logger.info(f"✅ Report written (path: {config.report_path})")
+    logger.info(f"✅ Report written (path: %s)", config.report_path)
 
 
 def _check_env_file():
@@ -55,7 +55,7 @@ def _check_env_file():
     if env_file.is_file():
         load_dotenv(env_file)
     else:
-        logger.error(f"❌ The .env file was not found: {env_file.resolve()}")
+        logger.error(f"❌ The .env file was not found: %s", env_file.resolve())
         sys.exit(1)
 
 
