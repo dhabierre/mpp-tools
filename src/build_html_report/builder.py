@@ -162,9 +162,9 @@ def _render_capital_trends_by_performance(
         const labels_pg = {json.dumps(labels)};
         const data_pg = {json.dumps(values)};
         const minPerformanceValue = Math.round(Math.min(...data_pg.performance), 0);
-        const maxPerformanceValue = Math.round(Math.max(...data_pg.performance), 0) + 1;
+        const maxPerformanceValue = Math.round(Math.max(...data_pg.performance), 0) + 2;
         const minGainValue = Math.round(Math.min(...data_pg.gain), 0);
-        const maxGainValue = Math.round(Math.max(...data_pg.gain), 0) +100;
+        const maxGainValue = Math.round(Math.max(...data_pg.gain), 0) +200;
         new Chart(document.getElementById("{canvas_id}"), {{
             type: "line",
             data: {{
@@ -177,7 +177,15 @@ def _render_capital_trends_by_performance(
                         borderColor: '{COLOR_PERFORMANCE}',
                         backgroundColor: '{COLOR_PERFORMANCE}',
                         borderWidth: 1,
-                        pointRadius: 1,
+                        pointRadius: data_pg.performance.map((value) =>
+                            value === data_pg.max_performance ? 2 : 1
+                        ),
+                        pointBackgroundColor: data_pg.performance.map((value) =>
+                            value === data_pg.max_performance ? '{COLOR_GREEN}' : '{COLOR_PERFORMANCE}'
+                        ),
+                        pointBorderColor: data_pg.performance.map((value) =>
+                            value === data_pg.max_performance ? '{COLOR_GREEN}' : '{COLOR_PERFORMANCE}'
+                        ),
                         pointHoverRadius: 6
                     }},
                     {{
@@ -204,7 +212,15 @@ def _render_capital_trends_by_performance(
                         borderColor: '{COLOR_GAIN}',
                         backgroundColor: '{COLOR_GAIN}',
                         borderWidth: 1,
-                        pointRadius: 1,
+                        pointRadius: data_pg.gain.map((value) =>
+                            value === data_pg.max_gain ? 2 : 1
+                        ),
+                        pointBackgroundColor: data_pg.gain.map((value) =>
+                            value === data_pg.max_gain ? '{COLOR_GREEN}' : '{COLOR_GAIN}'
+                        ),
+                        pointBorderColor: data_pg.gain.map((value) =>
+                            value === data_pg.max_gain ? '{COLOR_GREEN}' : '{COLOR_GAIN}'
+                        ),
                         pointHoverRadius: 6,
                         hidden: true
                     }},
@@ -345,7 +361,7 @@ def _render_capital_trends_by_amounts(
         const labels_ci = {json.dumps(labels)};
         const data_ci = {json.dumps(values)};
         const minValue = Math.round(Math.min(...data_ci.amount, ...data_ci.invested_amount), 0);
-        const maxValue = Math.round(Math.max(...data_ci.amount, ...data_ci.invested_amount), 0) +500;
+        const maxValue = Math.round(Math.max(...data_ci.amount, ...data_ci.invested_amount), 0) +1000;
         new Chart(document.getElementById("{canvas_id}"), {{
             type: "line",
             data: {{
@@ -359,7 +375,15 @@ def _render_capital_trends_by_amounts(
                         backgroundColor: '{COLOR_CAPITAL}',
                         borderWidth: 1,
                         pointRadius: 1,
-                        pointHoverRadius: 6
+                        pointRadius: data_ci.amount.map((value) =>
+                            value === data_ci.max_amount ? 2 : 1
+                        ),
+                        pointBackgroundColor: data_ci.amount.map((value) =>
+                            value === data_ci.max_amount ? '{COLOR_GREEN}' : '{COLOR_CAPITAL}'
+                        ),
+                        pointBorderColor: data_ci.amount.map((value) =>
+                            value === data_ci.max_amount ? '{COLOR_GREEN}' : '{COLOR_CAPITAL}'
+                        ),
                     }},
                     {{
                         label: "Max Capital",
