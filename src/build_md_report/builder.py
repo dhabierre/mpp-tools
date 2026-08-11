@@ -36,7 +36,6 @@ def build_md_report(
     product_trends: dict[str, list[ProductTrend]],
     config: Config,
 ) -> str:
-    """Return a NotebookLM-friendly Markdown report."""
     generated_at = datetime.now(ZoneInfo("Europe/Paris")).strftime("%Y-%m-%d %H:%M %Z")
     sections = [
         "# MPP Report",

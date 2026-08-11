@@ -42,6 +42,7 @@ class MPPClient:
             total=3,
             backoff_factor=0.5,
             status_forcelist=[429, 500, 502, 503, 504],
+            # POST requests are read-only in this API and can safely be retried
             allowed_methods=["GET", "POST"],
         )
 

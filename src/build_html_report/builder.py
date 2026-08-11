@@ -39,25 +39,8 @@ def build_html_report(
     product_trends: dict[str, list[ProductTrend]],
     config: Config
 ) -> str:
-    return _render_html(
-        capital,
-        capital_trends,
-        products,
-        positions,
-        product_trends,
-        config)
-
-
-def _render_html(
-    capital: Capital,
-    capital_trends: list[CapitalTrend],
-    products: dict[str, Product],
-    positions: list[Position],
-    product_trends: dict[str, list[ProductTrend]],
-    config: Config
-) -> str:
     generated_at = datetime.now(ZoneInfo("Europe/Paris")).strftime("%Y-%m-%d %H:%M")
-
+    
     capital_trends_performance_html = _render_capital_trends_by_performance(capital_trends)
     capital_trends_amounts_html = _render_capital_trends_by_amounts(capital_trends)
     positions_html = _render_positions(capital, positions, products, config)
