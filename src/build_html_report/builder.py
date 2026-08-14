@@ -384,6 +384,7 @@ def _render_capital_trends_by_amounts(
                         pointBorderColor: data_ci.amount.map((value) =>
                             value === data_ci.max_amount ? '{COLOR_GREEN}' : '{COLOR_CAPITAL}'
                         ),
+                        pointHoverRadius: 6
                     }},
                     {{
                         label: "Max Capital",
