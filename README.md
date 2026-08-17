@@ -1,6 +1,6 @@
 # MPP Tools
 
-A collection of Python tools to extract data from [Mon Petit Placement](https://www.monpetitplacement.fr) and generate personal portfolio performance reports.
+A collection of Python tools to extract data from [Mon Petit Placement](https://www.monpetitplacement.fr) and generate personal portfolio reports.
 
 ![HTML Report](.resources/html-report.jpg)
 
@@ -8,27 +8,27 @@ A collection of Python tools to extract data from [Mon Petit Placement](https://
 
 ## 🔒 Privacy Notice
 
-- These scripts process and collect portfolio data locally on your machine.  
-- No data is sent, shared, or transmitted to any external service.  
-- All collected information is stored locally in a SQLite database.
+- These scripts retrieve, process, and store portfolio data locally on your machine.
+- No data is sent to or shared with any external service.
+- All extracted data is stored locally in a SQLite database.
 
 
 ## 📝 Overview
 
-**MPP Tools** is composed of 3 main modules:
+**MPP Tools** consists of three main modules:
 
-- **Extract Data**: Retrieves and stores financial data from the MPP API
-- **Build HTML Report**: Generates an HTML report from the collected data
-- **Build MD Report**: Generates an Markdown report from the collected data
+- **Data Extraction**: Retrieves and stores financial data from the MPP API
+- **HTML Report Generation**: Generates an HTML report from the collected data
+- **Markdown Report Generation**: Generates a Markdown report from the collected data
 
 ### 📁 Project Structure
 
 ```
 mpp-tools/
 ├── src/
-│ ├── build_html_report/
-│ ├── build_md_report/
-│ └── extract_data/
+│   ├── build_html_report/
+│   ├── build_md_report/
+│   └── extract_data/
 ├── run.sh
 └── setup.sh
 ```
@@ -37,7 +37,7 @@ mpp-tools/
 
 - Python 3.10 or higher
 - Nginx (for deployment)
-- Certbot (for SSL certificates)
+- Certbot (for TLS certificates)
 
 ## 🚀 Installation
 
@@ -49,8 +49,8 @@ git clone https://github.com/dhabierre/mpp-tools.git
 cd mpp-tools
 
 git fetch --tags
-get tag
-git checkout 1.0.0 # replace with the latest version tag
+git tag
+git checkout tags/1.0.0 # Replace 1.0.0 with the desired version
 ```
 
 ```bash
@@ -62,7 +62,7 @@ nano setup.sh
 chmod +x setup.sh
 ./setup.sh
 
-# Output:
+# Example output:
 # 
 # 🔎 === Setup started ===
 # 
@@ -90,22 +90,22 @@ chmod +x setup.sh
 # 🎉 === Installation completed successfully ===
 ```
 
-Configure modules by creating their `.env` files:
+Configure each module by creating its `.env` file:
 
 ```bash
-# 1. Extract Data Module
+# 1. Data Extraction
 # Create the `.env` file and configure API credentials and storage paths
 
 cp src/extract_data/.env.sample src/extract_data/.env
 nano src/extract_data/.env
 
-# 2. Build HTML Report Module
+# 2. HTML Report Generation
 # Create the `.env` file and configure report generation options
 
 cp src/build_html_report/.env.sample src/build_html_report/.env
 nano src/build_html_report/.env
 
-# 3. Build MD Report Module
+# 2. Markdown Generation
 # Create the `.env` file and configure report generation options
 
 cp src/build_md_report/.env.sample src/build_md_report/.env
@@ -121,7 +121,7 @@ BASE="/home/ubuntu/mpp-tools" # Change to your installation path
 
 "$BASE/src/extract_data/venv/bin/python" "$BASE/src/extract_data/main.py"
 
-# Output:
+# Example output:
 #
 # 2026-07-10 21:29:01,668 | INFO | 🔄 [1 /6] Extracting 'Capital' data...
 # 2026-07-10 21:29:01,686 | INFO | ✅ [1 /6] Data 'Capital' extracted.
@@ -139,17 +139,17 @@ BASE="/home/ubuntu/mpp-tools" # Change to your installation path
 
 "$BASE/src/build_html_report/venv/bin/python" "$BASE/src/build_html_report/main.py"
 
-# Output:
+# Example output:
 # 
 # 2026-07-10 21:31:43,918 | INFO | 🔄 Building HTML report...
 # 2026-07-10 21:31:44,143 | INFO | ✅ Report written (path: /home/ubuntu/mpp-tools/outputs/reports/report.html)
 
 "$BASE/src/build_md_report/venv/bin/python" "$BASE/src/build_md_report/main.py"
 
-# Output:
+# Example output:
 # 
-# 2026-07-10 21:31:43,918 | INFO | 🔄 Building MD report...
-# 2026-07-10 21:31:44,143 | INFO | ✅ Report written (path: /home/ubuntu/mpp-tools/outputs/reports/report.md)
+# 2026-07-10 21:32:09,312 | INFO | 🔄 Building MD report...
+# 2026-07-10 21:32:09,677 | INFO | ✅ Report written (path: /home/ubuntu/mpp-tools/outputs/reports/report.md)
 ```
 
 ### ⏰ Scheduled Execution
@@ -161,7 +161,7 @@ This step allows you to automate script execution.
 nano run.sh
 ```
 
-Execute the script to validate the setup (`.env` files, paths, etc):
+Run the script to validate the setup (`.env` files, paths, etc.):
 
 ```bash
 chmod +x run.sh
@@ -188,10 +188,10 @@ crontab -e
 sudo mkdir -p /var/www/mpp
 sudo chown -R www-data:www-data /var/www/mpp
 
-# Set `DB_PATH` to /var/www/mpp/report.html
+# Set `REPORT_PATH` to /var/www/mpp/report.html
 nano src/build_html_report/.env
 
-# Set `DB_PATH` to /var/www/mpp/report.md
+# Set `REPORT_PATH` to /var/www/mpp/report.md
 nano src/build_md_report/.env
 ```
 
@@ -219,16 +219,16 @@ Enable the site:
 ```bash
 sudo ln -s /etc/nginx/sites-available/mpp /etc/nginx/sites-enabled/
 sudo nginx -t
-sudo nginx -s reload
+sudo systemctl reload nginx
 ```
 
-### 🔒 SSL Certificate with Certbot
+### 🔒 TLS Certificate with Certbot
 
 ```bash
 sudo certbot --nginx
 ```
 
-### 🚀 SSL and HTTP/2 Configuration
+### 🚀 TLS and HTTP/2 Configuration
 
 Edit the Nginx configuration again:
 
@@ -236,12 +236,13 @@ Edit the Nginx configuration again:
 sudo nano /etc/nginx/sites-available/mpp
 ```
 
-Add `http2` to the listen directives:
+Enable HTTP/2:
 
 ```nginx
 server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2 ipv6only=on;
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
     # ...
 }
 ```
@@ -250,8 +251,7 @@ Apply the changes:
 
 ```bash
 sudo nginx -t
-sudo nginx -s reload
-sudo service nginx restart
+sudo systemctl reload nginx
 ```
 
 ### 👤 User Permissions
