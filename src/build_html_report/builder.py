@@ -403,6 +403,17 @@ def _render_capital_trends_by_amounts(
                         borderWidth: 1,
                         pointRadius: 1,
                         pointHoverRadius: 6
+                    }},
+                    {{
+                        label: 'Delta',
+                        data: data_ci.amount.map((amount, i) =>
+                            Math.round(amount - data_ci.invested_amount[i])
+                        ),
+                        hidden: false,
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        backgroundColor: 'transparent',
+                        borderColor: 'transparent'
                     }}
                 ]
             }},
@@ -417,7 +428,7 @@ def _render_capital_trends_by_amounts(
                     legend: {{
                         labels: {{
                             filter: (legendItem) => {{
-                                return !["Max Capital"].includes(legendItem.text);
+                                return !["Max Capital", "Delta"].includes(legendItem.text);
                             }}
                         }},
                         onClick: (e, legendItem, legend) => {{
@@ -429,6 +440,25 @@ def _render_capital_trends_by_amounts(
                                 chart.setDatasetVisibility(1, !isVisible); // Max Capital
                             }}
                             chart.update();
+                        }}
+                    }},
+                    tooltip: {{
+                        callbacks: {{
+                            label: function(context) {{
+                                if (context.datasetIndex === 3) {{
+                                    const value = context.raw;
+                                    return `Delta : ${{value >= 0 ? '+' : ''}}${{value}}`;
+                                }}
+                                return `${{context.dataset.label}}: ${{context.formattedValue}}`;
+                            }},
+                            labelTextColor: function(context) {{
+                                if (context.datasetIndex === 3) {{
+                                    return context.raw >= 0
+                                        ? '{COLOR_GREEN}'
+                                        : '{COLOR_RED}';
+                                }}
+                                return undefined;
+                            }}
                         }}
                     }}
                 }},
