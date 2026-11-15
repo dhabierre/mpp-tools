@@ -615,6 +615,7 @@ def _render_product_trends(
     positions: list[Position]
 ) -> str:
     html = ""
+    position_by_guid = {position.guid: position for position in positions}
 
     for i, t in enumerate(product_trends.values()):
         guid = t[0].guid
@@ -691,7 +692,10 @@ def _render_product_trends(
         values_js = json.dumps(values)
 
         period_performances = _calculate_period_performances(product_trends.get(guid, []))
-        position = next((p for p in positions if p.guid == guid))
+        position = position_by_guid.get(guid)
+        performance = position.performance if position and position.performance is not None else None
+        performance_class = _css_class(performance) if performance is not None else "neutral"
+        performance_text = f"{performance:,.2f} %" if performance is not None else "—"
 
         html += f"""
 <div class="chart-container-pt {css_class}">
@@ -700,8 +704,8 @@ def _render_product_trends(
     <h3 class="position-title">
         {name}
     </h3>
-    <div class="{(_css_class(position.performance) if position.performance is not None else 'neutral')}">
-        → {position.performance:,.2f} %
+    <div class="{performance_class}">
+        → {performance_text}
     </div>
     <div class="period-performances">
         {_render_period_performances(period_performances)}
